@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2021", // Specifies the target JavaScript version
+    "module": "ESNext", // Module system
+    "moduleResolution": "node", // Module resolution method
+    "esModuleInterop": true, // Enable esModule default imports
+    "allowSyntheticDefaultImports": true,
+    "strict": true, // Enable strict type checking
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true, // Skip type checking for library files
+    "outDir": "./dist", // Output directory
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*"], // Files to compile
+  "exclude": ["node_modules"] // Exclude directories
+}
