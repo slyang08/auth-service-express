@@ -9,6 +9,7 @@
     "start": "node src/server.ts",
     "dev": "nodemon src/server.ts",
     "lint": "eslint .",
+    "format:check": "prettier --check .",
     "format:fix": "prettier --write .",
     "prepare": "husky"
   },
