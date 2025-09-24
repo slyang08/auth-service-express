@@ -19,6 +19,9 @@ export default [
         browser: "readonly",
         console: "readonly",
       },
+      env: {
+        node: true,
+      },
     },
 
     // Add the import plugin

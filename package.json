@@ -18,8 +18,10 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "dotenv": "^16.0.0",
+    "axios": "^1.12.2",
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.6.1",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^8.18.1",
@@ -27,7 +29,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",
-    "@types/bcryptjs": "^2.4.2",
+    "@types/bcryptjs": "^3.0.0",
+    "@types/cookie-parser": "^1.4.9",
     "@types/express": "^4.17.15",
     "@types/jsonwebtoken": "^9.0.1",
     "@typescript-eslint/eslint-plugin": "^8.43.0",
