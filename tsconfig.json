@@ -11,6 +11,6 @@
     "outDir": "./dist", // Output directory
     "rootDir": "./src"
   },
-  "include": ["src/**/*"], // Files to compile
-  "exclude": ["node_modules"] // Exclude directories
+  "include": ["src/**/*", "src/types/**/*"], // Files to compile
+  "exclude": ["node_modules", "dist"] // Exclude directories
 }

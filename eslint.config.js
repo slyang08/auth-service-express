@@ -13,11 +13,17 @@ export default [
 
     languageOptions: {
       parser: typescriptParser,
-      ecmaVersion: 2021,
-      sourceType: "module",
+      parserOptions: {
+        ecmaVersion: 2021,
+        sourceType: "module",
+      },
       globals: {
         browser: "readonly",
         console: "readonly",
+        process: "readonly",
+        __dirname: "readonly",
+        module: "readonly",
+        require: "readonly",
       },
     },
 
