@@ -3,10 +3,10 @@ import bcrypt from "bcryptjs";
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-import { getUserByEmail, getUserById, registerNewUser } from "../utils/userClient.js";
-import Account from "../models/Account.js";
+import Account, { AccountDoc } from "../models/Account.js";
 import { Payload, generateToken } from "../utils/generateToken.js";
 import { setTokenCookie } from "../utils/setTokenCookie.js";
+import { getUserByEmail, getUserById, registerNewUser } from "../utils/userClient.js";
 
 /**
  * @desc    Register a new user
@@ -22,13 +22,16 @@ export const register = async (req: Request, res: Response) => {
 
   try {
     // Call the User Service to register a user or retrieve a user
-    const response = await registerNewUser(nickname, email);
-    const userId = response.data.userId;
+    const { userId } = await registerNewUser(nickname, email);
+    if (!userId) {
+      throw new Error("userId not returned from User Service");
+    }
 
     // Add Account Information (Password)
-    await Account.create({ user: userId, password });
+    const account = new Account({ user: userId, password });
+    await account.save();
 
-    res.status(201).json({ message: "Registration successful. Please verify your email." });
+    res.status(201).json({ message: "Registration successful." });
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Register error:", error.message);
@@ -61,23 +64,16 @@ export const login = async (req: Request, res: Response) => {
     if (!user.verified)
       return res.status(401).json({ message: "Account not verified. Please check your email." });
 
-    const account = await Account.findOne({ user: user._id }).select("+password");
-    if (!account) return res.status(401).json({ message: "Sorry, cannot find the account" });
+    const account = await Account.findOne<AccountDoc>({ user: user._id }).select("+password");
+    // if (!account) return res.status(401).json({ message: "Sorry, cannot find the account" });
+    if (!account) throw new Error("Account not found");
 
     const isMatch = await bcrypt.compare(password, account.password);
     if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
 
-    const maybeAccountId: unknown = account?._id;
     const payload: Payload = {
       userId: user._id.toString(),
-      accountId:
-        typeof maybeAccountId === "string"
-          ? maybeAccountId
-          : typeof maybeAccountId === "object" &&
-              maybeAccountId !== null &&
-              "toString" in maybeAccountId
-            ? (maybeAccountId as { toString: () => string }).toString()
-            : undefined,
+      accountId: account._id.toString(),
     };
 
     const token = generateToken(payload);
@@ -95,8 +91,6 @@ export const login = async (req: Request, res: Response) => {
         preferredLanguage: user.preferredLanguage,
       },
     });
-
-    res.json({ token, user });
   } catch (error) {
     res.status(500).json({ message: "Login error", error });
   }
@@ -113,8 +107,8 @@ export const getMe = async (req: Request, res: Response, next: NextFunction) => 
       return res.status(401).json({ message: "User ID not found in request" });
     }
 
-    const userResponse = await getUserById(req.userId);
-    const user = userResponse.data;
+    const user = await getUserById(req.userId);
+    // const user = userResponse.data;
     if (!user) return res.status(404).json({ message: "User not found" });
 
     res.json({ user });

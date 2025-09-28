@@ -1,16 +1,24 @@
 // src/models/Account.ts
 import bcrypt from "bcryptjs";
-import { Document, Schema, model } from "mongoose";
+import mongoose, { Document, model, Schema, Types } from "mongoose";
 
 import { hashPassword, isPasswordReused } from "../utils/password.js";
+
+export interface AccountAttrs {
+  user: Types.ObjectId;
+  password: string;
+  status?: "Active" | "Closed" | "Frozen";
+  previousPasswords?: PreviousPassword[];
+}
 
 interface PreviousPassword {
   hash: string;
   changedAt: Date;
 }
 
-interface Account extends Document {
-  user: Schema.Types.ObjectId;
+export interface AccountDoc extends Document {
+  _id: Types.ObjectId;
+  user: Types.ObjectId;
   password: string;
   status: "Active" | "Closed" | "Frozen";
   previousPasswords: PreviousPassword[];
@@ -19,7 +27,7 @@ interface Account extends Document {
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
-const accountSchema = new Schema<Account>(
+const accountSchema = new Schema<AccountDoc>(
   {
     user: {
       type: Schema.Types.ObjectId,
@@ -54,7 +62,7 @@ const accountSchema = new Schema<Account>(
 accountSchema.index({ user: 1, status: 1 });
 
 // Password encryption middleware
-accountSchema.pre<Account>("save", async function (next) {
+accountSchema.pre<AccountDoc>("save", async function (next) {
   if (!this.isModified("password")) return next();
 
   try {
@@ -85,4 +93,6 @@ accountSchema.methods.comparePassword = async function (candidatePassword: strin
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-export default model<Account>("Account", accountSchema);
+const Account = model<AccountDoc>("Account", accountSchema);
+
+export default Account;

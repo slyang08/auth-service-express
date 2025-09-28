@@ -1,6 +1,6 @@
 // src/middlewares/authMiddleware.js
-import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
 
 import Account from "../models/Account.js";
 import { getUserById } from "../utils/userClient.js";

@@ -9,7 +9,7 @@ export interface Payload {
 
 export const generateToken = (payload: Payload): string => {
   const secret = process.env.JWT_SECRET as string;
-  let expiresIn: SignOptions["expiresIn"] = "15m"; // default
+  let expiresIn: SignOptions["expiresIn"] = "1d"; // default
   const options: SignOptions = {
     expiresIn,
   };

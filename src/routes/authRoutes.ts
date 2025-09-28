@@ -1,5 +1,6 @@
 // src/routes/authRoute.ts
 import express from "express";
+
 import { register, login, getMe } from "../controllers/authController.js";
 import { protect } from "../middlewares/authMiddleware.js";
 

@@ -8,15 +8,14 @@ interface PreviousPassword {
 }
 
 export const hashPassword = async (password: string) => {
-  return await bcrypt.hash(password, SALT_ROUNDS);
+  const salt = await bcrypt.genSalt(SALT_ROUNDS);
+  return bcrypt.hash(password, salt);
 };
 
-export const isPasswordReused = async (
-  newPassword: string,
-  previousPasswords: PreviousPassword[] = []
-) => {
-  const checks = await Promise.all(
-    previousPasswords.map((prev) => bcrypt.compare(newPassword, prev.hash))
-  );
-  return checks.some((match) => match);
+export const isPasswordReused = async (newPassword: string, previous: PreviousPassword[]) => {
+  for (const prev of previous) {
+    const match = await bcrypt.compare(newPassword, prev.hash);
+    if (match) return true;
+  }
+  return false;
 };
